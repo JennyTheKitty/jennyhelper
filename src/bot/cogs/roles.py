@@ -2,7 +2,7 @@ from typing import Optional, Mapping
 
 import discord
 from discord.ext import commands
-import tortoise
+from tortoise.exceptions import DoesNotExist
 
 from bot.db.models import RoleMessage
 
@@ -30,8 +30,6 @@ class Roles(commands.Cog):
         await ctx.message.delete()
 
         requested: Mapping[str, int] = self.get_roles(ctx.guild, msg.content)
-
-        print(requested)
 
         role_message, created = await RoleMessage.get_or_create({"data": requested}, id=msg.id)
         if not created:
@@ -66,7 +64,7 @@ class Roles(commands.Cog):
 
         try:
             role_message = await RoleMessage.get(id=payload.message_id)
-        except tortoise.exception.DoesNotExist:
+        except DoesNotExist:
             self.logger(f"No role message for id {payload.message_id}")
             return
         
@@ -88,7 +86,7 @@ class Roles(commands.Cog):
     async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent):
         try:
             role_message = await RoleMessage.get(id=payload.message_id)
-        except tortoise.exception.DoesNotExist:
+        except DoesNotExist:
             self.logger(f"No role message for id {payload.message_id}")
             return
 
