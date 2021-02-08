@@ -31,7 +31,9 @@ class Roles(commands.Cog):
 
         requested: Mapping[str, int] = self.get_roles(ctx.guild, msg.content)
 
-        role_message, created = await RoleMessage.get_or_create({"data": requested}, id=msg.id)
+        role_message, created = await RoleMessage.get_or_create(
+            {"data": requested}, id=msg.id
+        )
         if not created:
             role_message.data = requested
             await role_message.save()
@@ -67,7 +69,7 @@ class Roles(commands.Cog):
         except DoesNotExist:
             self.logger(f"No role message for id {payload.message_id}")
             return
-        
+
         # msg = await (self.bot.get_channel(payload.channel_id)).fetch_message(
         #     payload.message_id
         # )

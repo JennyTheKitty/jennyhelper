@@ -1,9 +1,4 @@
-from typing import Optional, Mapping
-
-import discord
 from discord.ext import commands
-
-from bot.db.models import RoleMessage
 
 
 class Debug(commands.Cog):
