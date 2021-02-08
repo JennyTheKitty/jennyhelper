@@ -1,0 +1,5 @@
+discord.py
+uvloop
+python-dotenv
+regex
+tortoise-orm
