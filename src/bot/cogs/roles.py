@@ -78,7 +78,7 @@ class Roles(commands.Cog):
 
         guild = self.bot.get_guild(payload.guild_id)
 
-        role_id = role_message.data[str(payload.emoji)]
+        role_id = role_message.data[str(payload.emoji).lower()]
 
         role = discord.utils.get(guild.roles, id=role_id)
 
@@ -102,7 +102,7 @@ class Roles(commands.Cog):
 
         member = await guild.fetch_member(payload.user_id)
 
-        role_id = role_message.data[str(payload.emoji)]
+        role_id = role_message.data[str(payload.emoji).lower()]
 
         role = discord.utils.get(guild.roles, id=role_id)
 
