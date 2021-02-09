@@ -1,4 +1,6 @@
 import re
+import random
+import itertools
 
 import discord
 from discord.ext import commands
@@ -16,14 +18,21 @@ URL_PATTERN = re.compile(
 
 class Fun(commands.Cog):
     faces = ["(・`ω´・)", ";;w;;", "OwO", "UwU", ">w<", "^w^", "ÚwÚ", "^-^", ":3", "x3"]
-    exclamations = ["!?", "?!!", "?!?1", "!!11", "?!?!"]
+    exclamations = ["!!!!11", "1!!", "!¡¡!1!", "!!1¡1", "!!", "¡"]
+    questions = ["!?", "?!!?", "?!?1", "?!?!"]
     uwuMap = [
-        [r"(.*)(?:r|l)(.*)", r"\1w\2"],
-        [r"(.*)(?:R|L)(.*)", r"\1W\2"],
-        [r"(.*)n([aeiou])(.*)", r"\1ny\2\3"],
-        [r"(.*)N([aeiou])(.*)", r"\1Ny\2\3"],
-        [r"(.*)N([AEIOU])(.*)", r"\1Ny\2\3"],
-        [r"(.*)ove(.*)", r"\1uv\2"],
+        # r|l => w, but not if at the end of word
+        [r"(?:l|r)(?!l$|r$)(?!$)", r"w"],
+        [r"(?:L|R)(?!L$|R$)(?!$)", r"W"],
+        # Nyaa
+        [r"(n|N)([aeiou])", r"\1y\2"],
+        [r"(N)([AEIOU])", r"\1Y\2"],
+        # Love => Luv
+        [r"ove", r"uv"],
+        [r"OVE", r"UV"],
+        # with => wiff
+        [r"(?<!^)th", r"ff"],
+        [r"(?<!^)TH", r"FF"],
     ]
 
     def __init__(self, bot):
@@ -31,19 +40,26 @@ class Fun(commands.Cog):
 
     @commands.command()
     async def uwu(self, ctx: commands.Context, *, text: str):
-        words = re.split(r"\s", text)
-        outWords = []
+        words = [
+            ([x] if re.match(URL_PATTERN, x) else re.findall(r"[\w\']+|[^\w\s]+", x))
+            for x in re.split(" ", text)
+        ]
+        out = ""
 
-        for word in words:
+        for word in itertools.chain(*words):
             if re.match(URL_PATTERN, word):
-                outWords.append(word)
-                continue
+                out += " " + word
+            elif re.match(r"!+", word):
+                out += random.choice(self.exclamations)
+            elif "?" in word and re.match(r"[?!]+", word):
+                out += random.choice(self.questions)
+            elif re.match(r"[,.]+", word):
+                out += " " + " ".join(random.choice(self.faces) for _ in word)
+            else:
+                outWord = word
+                for pattern, repl in self.uwuMap:
+                    outWord = re.sub(pattern, repl, outWord)
 
-            outWord = word
-            for pattern, repl in self.uwuMap:
-                print(outWord)
-                outWord = re.sub(pattern, repl, outWord)
-                
-            outWords.append(outWord)
+                out += " " + outWord
 
-        await ctx.send(" ".join(outWords))
+        await ctx.send(out)
