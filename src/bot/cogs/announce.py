@@ -9,7 +9,7 @@ CDN_LINK_PATTERN = r"(https:\/\/(?:cdn|media)\.discordapp\.(?:com|net)\/\S*)"
 
 PING_ROLE_NAME = "JFF New Content Ping"
 URL = "https://justfor.fans/JennyKittyBaby"
-CHANNEL = "updates"
+CHANNEL = "jenny-new-content"
 AUTHOR_USERNAME = "JennyKittyBaby"
 AUTHOR_AVATAR_URL = "https://cdn.discordapp.com/attachments/263324164117495809/808068333140049920/5w6Oqh4e_400x400.png"
 
